@@ -1,0 +1,269 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculus in Animal Science: Kedah-Kelantan Cattle Growth Rates</title>
+    <!-- Tailwind CSS for modern styling -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Chart.js for interactive rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <!-- Header / Navigation -->
+    <header class="bg-emerald-700 text-white shadow-md py-6 px-4 sm:px-8">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <span class="bg-emerald-500 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">Malaysian Bioscience Application</span>
+                <h1 class="text-2xl sm:text-3xl font-bold mt-1">Animal Husbandry Tech: Growth Derivative Modeling</h1>
+            </div>
+            <div class="text-right text-xs sm:text-sm border-l-0 md:border-l md:pl-4 border-emerald-500">
+                <p class="font-semibold text-emerald-200">Scenario Focus:</p>
+                <p>Kedah-Kelantan (KK) Beef Cattle Development</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl w-full mx-auto p-4 sm:p-8 flex-grow grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Left Column: Educational Content & Formulas -->
+        <section class="lg:col-span-5 flex flex-col gap-6">
+            
+            <!-- Problem Context -->
+            <div class="bg-white rounded-xl shadow-xs border border-slate-200 p-6">
+                <h2 class="text-xl font-bold text-slate-950 mb-3 flex items-center gap-2">
+                    <span class="p-1.5 bg-emerald-100 rounded text-emerald-700 text-sm">Context</span>
+                    The Bioscience Problem
+                </h2>
+                <p class="text-slate-600 leading-relaxed text-sm mb-4">
+                    In precision animal husbandry, maximizing feed efficiency for Malaysia's indigenous <strong>Kedah-Kelantan (KK) cattle</strong> requires identifying the precise moment their growth rate peaks before plateauing. By modeling a Sigmoid Growth Curve, farm management can determine the exact week of maximum daily gain, optimize slaughter age, and minimize feed wastage.
+                </p>
+                <div class="p-3 bg-slate-50 rounded-lg text-xs border border-slate-150">
+                    <span class="font-semibold text-slate-700 block mb-1">Data Source Benchmark:</span>
+                    Mathematical growth parameters adapted from growth performance studies of KK cattle documented in the <em>Malaysian Agricultural Research and Development Institute (MARDI) Research Journal</em> and the <em>Department of Veterinary Services (DVS) Malaysia</em> registries.
+                </div>
+            </div>
+
+            <!-- Mathematical Modeling -->
+            <div class="bg-white rounded-xl shadow-xs border border-slate-200 p-6">
+                <h2 class="text-xl font-bold text-slate-950 mb-4 flex items-center gap-2">
+                    <span class="p-1.5 bg-emerald-100 rounded text-emerald-700 text-sm">Math</span>
+                    Mathematical Formulation
+                </h2>
+                
+                <!-- Function f(x) -->
+                <div class="mb-4">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wide block">Sigmoid Growth Function $f(x)$</label>
+                    <div class="bg-slate-900 text-emerald-400 p-3 rounded-lg font-mono text-xs sm:text-sm mt-1 overflow-x-auto">
+                        W(t) = 220 / (1 + e^(-0.08 * (t - 30))) + 15
+                    </div>
+                    <p class="text-xs text-slate-500 mt-1">
+                        Where <strong>W(t)</strong> is live weight in kg, and <strong>t</strong> is time in weeks (from weaning at week 0 to maturity at week 70). Initial weaning weight is set at 15 kg.
+                    </p>
+                </div>
+
+                <hr class="border-slate-100 my-4" />
+
+                <!-- Derivative f'(x) -->
+                <div>
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wide block">The Derivative $f'(x)$ (Rate of Change)</label>
+                    <div class="bg-slate-900 text-amber-400 p-3 rounded-lg font-mono text-xs sm:text-sm mt-1 overflow-x-auto">
+                        dW/dt = (1.76 * e^(-0.08 * (t - 30))) / (1 + e^(-0.08 * (t - 30)))^2
+                    </div>
+                    <p class="text-xs text-slate-500 mt-1">
+                        Yields the instantaneous growth velocity ($\text{kg/week}$) at any specific week $t$.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Column: Chart & Interactive Panel -->
+        <section class="lg:col-span-7 flex flex-col gap-6">
+            
+            <!-- Interactive Chart Box -->
+            <div class="bg-white rounded-xl shadow-md border border-slate-200 p-4 sm:p-6 flex flex-col">
+                <div class="mb-4">
+                    <h2 class="text-xl font-bold text-slate-950">Live Weight vs. Time Curve</h2>
+                    <p class="text-xs text-slate-500">Click anywhere inside the chart grid to evaluate the derivative at that week.</p>
+                </div>
+                
+                <div class="relative w-full h-[320px] sm:h-[400px]">
+                    <canvas id="growthChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Analysis Output Card -->
+            <div id="analysisCard" class="bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-xl p-6 shadow-md transition-all duration-300 border-l-8 border-amber-500">
+                <div id="promptText" class="text-center py-4 text-slate-400 text-sm">
+                    💡 Click on the graph above to execute calculus operations on the animal's growth trajectory.
+                </div>
+                
+                <div id="resultContent" class="hidden grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="sm:col-span-1 border-b sm:border-b-0 sm:border-r border-slate-700 pb-3 sm:pb-0 sm:pr-4">
+                        <span class="text-xs font-semibold text-slate-400 block uppercase">Selected Point</span>
+                        <div class="text-xl font-bold text-emerald-400 mt-1"><span id="outWeek">-</span> Weeks</div>
+                        <span class="text-xs text-slate-400 block mt-1">Current Weight: <strong class="text-white" id="outWeight">-</strong> kg</span>
+                    </div>
+                    
+                    <div class="sm:col-span-2 flex flex-col justify-between">
+                        <div>
+                            <span class="text-xs font-semibold text-amber-400 block uppercase tracking-wider">Calculated Derivative $f'(t)$</span>
+                            <div class="text-2xl font-black text-white mt-1">
+                                <span id="outDerivative">-</span> <span class="text-xs font-normal text-slate-300">kg / week</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3 bg-slate-800/80 p-2.5 rounded border border-slate-700">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide block">Layman Translation:</span>
+                            <p id="outExplanation" class="text-xs text-slate-200 mt-0.5 leading-relaxed"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-500 text-center py-4 text-xs border-t border-slate-800 mt-8">
+        <p>© 2026 Sandbox Environment - Prepared for Animal Husbandry Technology Analytics Applications.</p>
+    </footer>
+
+    <!-- Chart Configuration Script -->
+    <script>
+        const ctx = document.getElementById('growthChart').getContext('2d');
+        
+        // Mathematical Constants derived for typical Kedah-Kelantan cattle parameters
+        const L = 220;    // Maximum carrying capacity / asymptotic weight minus base weight adjustment
+        const k = 0.08;   // Growth velocity coefficient
+        const t0 = 30;    // Inflection point age in weeks (point of maximum growth rate)
+        const base = 15;  // Average weaning weight in kg
+        
+        // Generate dataset points from week 0 to week 70
+        const weeksData = [];
+        const weightData = [];
+        
+        for (let t = 0; t <= 70; t++) {
+            weeksData.push(t);
+            // f(t) formula
+            let weight = (L / (1 + Math.exp(-k * (t - t0)))) + base;
+            weightData.push(parseFloat(weight.toFixed(2)));
+        }
+
+        // Initialize Chart.js with standard configuration and animation rules
+        const growthChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: weeksData,
+                datasets: [{
+                    label: 'Cattle Weight (kg)',
+                    data: weightData,
+                    borderColor: '#059669',
+                    borderWidth: 3,
+                    backgroundColor: 'rgba(5, 150, 105, 0.05)',
+                    fill: true,
+                    tension: 0.2,
+                    pointRadius: 0,
+                    pointHoverRadius: 6,
+                    pointHoverBackgroundColor: '#f59e0b',
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Time Post-Weaning (Weeks)', color: '#475569', font: { weight: 'bold' } },
+                        grid: { color: '#f1f5f9' }
+                    },
+                    y: {
+                        title: { display: true, text: 'Live Weight (kg)', color: '#475569', font: { weight: 'bold' } },
+                        grid: { color: '#f1f5f9' },
+                        suggestedMax: 250
+                    }
+                },
+                // Trigger action upon selection within chart canvas
+                onClick: (e) => {
+                    const points = growthChart.getElementsAtEventForMode(e, 'nearest', { intersect: false }, true);
+                    if (points.length > 0) {
+                        const idx = points[0].index;
+                        evaluateDerivativeAtPoint(idx);
+                    }
+                },
+                hover: {
+                    mode: 'nearest',
+                    intersect: false
+                },
+                animation: {
+                    duration: 1200,
+                    easing: 'easeOutQuart'
+                }
+            }
+        });
+
+        // Compute the f'(x) value and generate natural language outputs
+        function evaluateDerivativeAtPoint(week) {
+            // Function value: f(t)
+            const weight = weightData[week];
+            
+            // Derivative evaluation: f'(t) = (L * k * e^(-k*(t-t0))) / (1 + e^(-k*(t-t0)))^2
+            const exponent = -k * (week - t0);
+            const expTerm = Math.exp(exponent);
+            const derivativeVal = (L * k * expTerm) / Math.pow((1 + expTerm), 2);
+            
+            const finalRate = derivativeVal.toFixed(3);
+
+            // Interface Content Updates
+            document.getElementById('promptText').classList.add('hidden');
+            const resultCard = document.getElementById('resultContent');
+            resultCard.classList.remove('hidden');
+            
+            document.getElementById('outWeek').innerText = week;
+            document.getElementById('outWeight').innerText = weight;
+            document.getElementById('outDerivative').innerText = finalRate;
+            
+            // Contextual Bioscience Translation Engines
+            let explanation = "";
+            if (week < 15) {
+                explanation = `At Week ${week}, the animal is adapting to post-weaning solid feed options. Growth acceleration is positive but slow. The animal gains ${finalRate} kg this week.`;
+            } else if (week >= 15 && week <= 25) {
+                explanation = `The cattle are entering an aggressive metabolic phase. Muscle structural development is scaling efficiently, and weight increase is stepping up fast.`;
+            } else if (week > 25 && week <= 35) {
+                explanation = `CRITICAL WINDOW: At Week ${week}, growth rate peaks close to its theoretical absolute max (~1.76 kg/week). Feed conversion is optimized; ideal period for nutrient-dense feeding cycles.`;
+            } else if (week > 35 && week <= 55) {
+                explanation = `Biological decelerating curve. Rate drops to ${finalRate} kg/week as the animal hits physiological maturity. Fat deposits displace muscle accumulation.`;
+            } else {
+                explanation = `The curve plateaus. Maintenance requirements consume feed input with negligible biomass gains. Maintaining past this stage risks reducing profit margins.`;
+            }
+            
+            document.getElementById('outExplanation').innerText = explanation;
+            
+            // Visual accentuation to track user action
+            const cardElement = document.getElementById('analysisCard');
+            cardElement.className = cardElement.className.replace(/border-(amber|emerald|blue)-500/g, '');
+            
+            if (week > 25 && week <= 35) {
+                cardElement.classList.add('border-emerald-500');
+            } else if (week > 55) {
+                cardElement.classList.add('border-blue-500');
+            } else {
+                cardElement.classList.add('border-amber-500');
+            }
+        }
+    </script>
+</body>
+</html>
+
+```
